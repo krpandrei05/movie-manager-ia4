@@ -11,9 +11,15 @@ app = Flask(__name__,
             static_folder='static')
 app.secret_key = 'movie_manager_secret_key_change_in_production'
 
+from views import auth_views
+
+app.register_blueprint(auth_views.auth_bp)
+
 @app.route('/')
 def index():
-    return "Movie Manager - Setup Complete"
+    if 'user_id' in session:
+        return redirect(url_for('dashboard.show_dashboard'))
+    return redirect(url_for('auth.show_login'))
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
