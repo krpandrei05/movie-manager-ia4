@@ -27,5 +27,18 @@ def init_db():
         )
     ''')
     
+    # Creeaza tabelul Movies (Nou in Commit 4)
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS movies (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            title TEXT NOT NULL,
+            year TEXT,
+            poster TEXT,
+            status TEXT DEFAULT 'To Watch',
+            FOREIGN KEY (user_id) REFERENCES users (id)
+        )
+    ''')
+    
     conn.commit()
     conn.close()
