@@ -24,3 +24,32 @@ class APIClient:
             return requests.post(url, json={'username': username, 'password': password})
         except requests.exceptions.RequestException:
             return None
+            
+    def get_movies(self):
+        url = f"{self.base_url}/movies"
+        try:
+            return requests.get(url, headers=self._get_headers())
+        except requests.exceptions.RequestException:
+            return None
+
+    def add_movie(self, title, year=None, poster=None):
+        url = f"{self.base_url}/movies"
+        data = {'title': title, 'year': year, 'poster': poster}
+        try:
+            return requests.post(url, json=data, headers=self._get_headers())
+        except requests.exceptions.RequestException:
+            return None
+
+    def delete_movie(self, movie_id):
+        url = f"{self.base_url}/movies/{movie_id}"
+        try:
+            return requests.delete(url, headers=self._get_headers())
+        except requests.exceptions.RequestException:
+            return None
+            
+    def update_movie_status(self, movie_id, status):
+        url = f"{self.base_url}/movies/{movie_id}"
+        try:
+            return requests.put(url, json={'status': status}, headers=self._get_headers())
+        except requests.exceptions.RequestException:
+            return None
