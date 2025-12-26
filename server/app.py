@@ -1,6 +1,9 @@
 # Backend API - Aplicatie Flask pentru API REST (raspunsuri JSON)
 from flask import Flask, jsonify, request
 from models.database import init_db
+from routes.auth_routes import auth_bp
+from routes.movie_routes import movie_bp
+from services.external_api import search_movies
 
 app = Flask(__name__)
 
@@ -21,6 +24,15 @@ def handle_preflight():
         response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
         response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
         return response
+
+# Inregistrare blueprint-uri
+app.register_blueprint(auth_bp, url_prefix='/api')
+app.register_blueprint(movie_bp, url_prefix='/api')
+
+# Ruta pentru cautare externa (TVMaze)
+@app.route('/api/search-movies', methods=['GET'])
+def search_movies_route():
+    return search_movies()
 
 @app.route('/api/health', methods=['GET'])
 def health():
