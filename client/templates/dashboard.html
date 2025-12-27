@@ -12,47 +12,81 @@
     </div>
 </div>
 
-<div class="movie-grid">
-    {% for movie in movies %}
-    <div class="movie-card">
-        <div class="movie-poster"
-            style="background-image: url('{{ movie.poster if movie.poster else 'https://via.placeholder.com/300x450?text=No+Poster' }}')">
-            <div class="overlay">
-                <form action="{{ url_for('dashboard.delete_movie', movie_id=movie.id) }}" method="POST"
-                    onsubmit="return confirm('Delete this movie?');">
-                    <button type="submit" class="btn-icon delete">🗑️</button>
-                </form>
+<div class="movie-lists">
+    <div class="list-column">
+        <h2>To Watch</h2>
+        <div class="movie-list">
+            {% for movie in movies['To Watch'] %}
+            <div class="movie-item">
+                <span class="movie-title-text">{{ movie.title }} ({{ movie.year }})</span>
+                <div class="movie-actions">
+                    <form action="{{ url_for('dashboard.update_status', movie_id=movie.id) }}" method="POST"
+                        style="display:inline;">
+                        <input type="hidden" name="status" value="Watched">
+                        <button type="submit" class="btn-sm">Watched</button>
+                    </form>
+                    <form action="{{ url_for('dashboard.delete_movie', movie_id=movie.id) }}" method="POST"
+                        style="display:inline;" onsubmit="return confirm('Delete?');">
+                        <button type="submit" class="btn-sm delete">X</button>
+                    </form>
+                </div>
             </div>
-        </div>
-        <div class="movie-info">
-            <h3>{{ movie.title }}</h3>
-            <span class="year">{{ movie.year if movie.year else 'N/A' }}</span>
-            <form action="{{ url_for('dashboard.update_status', movie_id=movie.id) }}" method="POST">
-                <select name="status" onchange="this.form.submit()"
-                    class="status-badge {{ movie.status | lower | replace(' ', '-') }}">
-                    <option value="To Watch" {% if movie.status=='To Watch' %}selected{% endif %}>To Watch</option>
-                    <option value="Watched" {% if movie.status=='Watched' %}selected{% endif %}>Watched</option>
-                </select>
-            </form>
+            {% else %}
+            <p class="text-secondary">No movies.</p>
+            {% endfor %}
         </div>
     </div>
-    {% else %}
-    <div class="empty-state">
-        <p>Your list is empty. Start by adding some movies!</p>
+
+    <div class="list-column">
+        <h2>Watched</h2>
+        <div class="movie-list">
+            {% for movie in movies['Watching'] %}
+            <div class="movie-item">
+                <span class="movie-title-text">{{ movie.title }} ({{ movie.year }})</span>
+                <div class="movie-actions">
+                    <form action="{{ url_for('dashboard.update_status', movie_id=movie.id) }}" method="POST"
+                        style="display:inline;">
+                        <input type="hidden" name="status" value="Completed">
+                        <button type="submit" class="btn-sm">Finish</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+            {% for movie in movies['Completed'] %}
+            <div class="movie-item">
+                <span class="movie-title-text" style="text-decoration: line-through;">{{ movie.title }} ({{ movie.year
+                    }})</span>
+                <div class="movie-actions">
+                    <form action="{{ url_for('dashboard.delete_movie', movie_id=movie.id) }}" method="POST"
+                        style="display:inline;" onsubmit="return confirm('Delete?');">
+                        <button type="submit" class="btn-sm delete">X</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
     </div>
-    {% endfor %}
 </div>
 
 <!-- Add Movie Modal -->
 <div id="addModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal()">&times;</span>
-        <h2>Add Manual Movie</h2>
-        <form action="{{ url_for('dashboard.add_movie') }}" method="POST">
-            <div class="form-group">
+        <h2>Add Movie</h2>
+
+        <form action="{{ url_for('dashboard.add_movie') }}" method="POST" autocomplete="off">
+            <div class="form-group" style="position: relative;">
                 <label>Title</label>
-                <input type="text" name="title" required>
+                <label>Title</label>
+                <input type="text" name="title" id="movie-title" placeholder="Search movie..."
+                    oninput="searchMovies(this.value);" onfocus="showSearchResults()" onblur="hideSearchResults()"
+                    required>
+
+                <div id="movie-search-results" class="movie-search-results"></div>
+
+                <input type="hidden" id="movie-validated" value="0">
             </div>
+
             <div class="form-group">
                 <label>Year</label>
                 <input type="text" name="year">
