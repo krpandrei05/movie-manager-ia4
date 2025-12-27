@@ -1,5 +1,6 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, jsonify
 from api_client import APIClient
+import requests
 
 dashboard_bp = Blueprint('dashboard', __name__)
 
@@ -11,11 +12,11 @@ def show_dashboard():
     client = APIClient()
     response = client.get_movies()
     
-    movies = []
+    movies = {'To Watch': [], 'Watching': [], 'Completed': []}
     if response and response.status_code == 200:
         movies = response.json()
     else:
-        flash("Could not load movies.", "error")
+        pass
         
     return render_template('dashboard.html', movies=movies, user=session.get('user'))
 
