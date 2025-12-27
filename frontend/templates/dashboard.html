@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/movie_search.js') }}"></script>
+<script>
+    function setMovieValidated(validated) {
+        const hiddenInput = document.getElementById('movie-validated');
+        if (hiddenInput) {
+            hiddenInput.value = validated ? '1' : '0';
+        }
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        const movieInput = document.getElementById('movie-title');
+        if (movieInput) {
+            movieInput.addEventListener('input', function() {
+                setMovieValidated(false);
+            });
+        }
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<div id="dashboard">
+    <aside class="sidebar">
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="{{ url_for('dashboard.show_dashboard') }}" class="nav-item active" data-page="dashboard">My Movies</a></li>
+            </ul>
+        </nav>
+        <div class="sidebar-footer">
+            <form method="POST" action="{{ url_for('auth.logout') }}" style="display: inline;">
+                <button type="submit" class="logout-btn">Logout</button>
+            </form>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="dashboard-header">
+            <div class="header-left">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="header-logo" onclick="document.querySelector('.sidebar').classList.toggle('collapsed')" style="cursor: pointer;" title="Toggle menu">
+                <h2 class="header-title">Movie Manager</h2>
+            </div>
+            <div class="user-info">
+                <svg class="user-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                    <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+                </svg>
+                <span id="username-display" class="username-text">{{ username }}</span>
+            </div>
+        </header>
+
+        <div class="content-wrapper">
+            <div id="page-dashboard" class="page-content">
+                <section class="movies-section">
+                    <h1 class="page-title">My Movies</h1>
+                    
+                    <div class="add-movie">
+                        <form method="POST" action="{{ url_for('dashboard.add_movie') }}" id="add-movie-form" style="display: flex; gap: 10px; width: 100%;">
+                            <div class="movie-search-container" style="flex: 1;">
+                                <input type="text" name="title" id="movie-title" placeholder="Search movie title..." autocomplete="off" oninput="searchMovies(this.value); selectedMovieDashboard = null; setMovieValidated(false);" onfocus="showSearchResults()" onblur="hideSearchResults()" required>
+                                <input type="hidden" name="status" value="To Watch">
+                                <input type="hidden" name="movie_validated" id="movie-validated" value="0">
+                                <div id="movie-search-results" class="movie-search-results"></div>
+                            </div>
+                            <button type="submit" class="add-movie-btn">Add Movie</button>
+                        </form>
+                    </div>
+                    
+                    <div class="movie-lists">
+                        <div class="list-column">
+                            <h2>To Watch</h2>
+                            <div id="to-watch-list" class="movie-list">
+                                {% for movie in movies['To Watch'] %}
+                                <div class="movie-item">
+                                    <span class="movie-title-text">{{ movie.title }}</span>
+                                    <div class="movie-actions">
+                                        <form method="POST" action="{{ url_for('dashboard.delete_movie', movie_id=movie.id) }}" style="display: inline;" onsubmit="event.preventDefault(); showConfirmDialog('Are you sure you want to delete the movie &quot;{{ movie.title }}&quot;?', this);">
+                                            <button type="submit" class="delete-btn" title="Delete movie">
+                                                <span class="btn-icon">🗑</span>
+                                                <span class="btn-text">Delete</span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <div class="list-column">
+                            <h2>Watching</h2>
+                            <div id="watching-list" class="movie-list">
+                                {% for movie in movies['Watching'] %}
+                                <div class="movie-item">
+                                    <span class="movie-title-text">{{ movie.title }}</span>
+                                    <div class="movie-actions">
+                                        <form method="POST" action="{{ url_for('dashboard.delete_movie', movie_id=movie.id) }}" style="display: inline;" onsubmit="event.preventDefault(); showConfirmDialog('Are you sure you want to delete the movie &quot;{{ movie.title }}&quot;?', this);">
+                                            <button type="submit" class="delete-btn" title="Delete movie">
+                                                <span class="btn-icon">🗑</span>
+                                                <span class="btn-text">Delete</span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <div class="list-column">
+                            <h2>Completed</h2>
+                            <div id="completed-list" class="movie-list">
+                                {% for movie in movies['Completed'] %}
+                                <div class="movie-item">
+                                    <span class="movie-title-text">
+                                        {{ movie.title }}
+                                        {% if movie.rating and movie.rating != '-' %}
+                                            <span class="movie-rating-display">({{ movie.rating }}/10)</span>
+                                        {% endif %}
+                                    </span>
+                                    <div class="movie-actions">
+                                        <form method="POST" action="{{ url_for('dashboard.delete_movie', movie_id=movie.id) }}" style="display: inline;" onsubmit="event.preventDefault(); showConfirmDialog('Are you sure you want to delete the movie &quot;{{ movie.title }}&quot;?', this);">
+                                            <button type="submit" class="delete-btn" title="Delete movie">
+                                                <span class="btn-icon">🗑</span>
+                                                <span class="btn-text">Delete</span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}
