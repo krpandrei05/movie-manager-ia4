@@ -12,8 +12,10 @@ app = Flask(__name__,
 app.secret_key = 'movie_manager_secret_key_change_in_production'
 
 from views import auth_views
+from views import dashboard_views
 
 app.register_blueprint(auth_views.auth_bp)
+app.register_blueprint(dashboard_views.dashboard_bp)
 
 @app.route('/')
 def index():
