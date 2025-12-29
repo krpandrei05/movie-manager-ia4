@@ -569,19 +569,32 @@ button:hover {
     align-items: center;
 }
 
+.movie-item .move-btn,
 .movie-item .delete-btn {
     display: flex;
     align-items: center;
     gap: 6px;
     padding: 8px 14px;
     font-size: 13px;
-    background-color: #3a1f1f;
+    background-color: #252525;
     color: #d3d3d3;
-    border: 1px solid rgba(220, 53, 69, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
     cursor: pointer;
     transition: all .3s ease-in-out;
     white-space: nowrap;
+}
+
+.movie-item .move-btn:hover {
+    background-color: #2a2a2a;
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.movie-item .delete-btn {
+    background-color: #3a1f1f;
+    border-color: rgba(220, 53, 69, 0.3);
 }
 
 .movie-item .delete-btn:hover {
@@ -589,6 +602,57 @@ button:hover {
     border-color: rgba(220, 53, 69, 0.5);
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(220, 53, 69, 0.2);
+}
+
+.move-btn-watching {
+    border-color: rgba(0, 123, 255, 0.3);
+}
+
+.move-btn-watching:hover {
+    background-color: rgba(0, 123, 255, 0.1);
+    border-color: rgba(0, 123, 255, 0.5);
+}
+
+.move-btn-completed {
+    border-color: rgba(40, 167, 69, 0.3);
+}
+
+.move-btn-completed:hover {
+    background-color: rgba(40, 167, 69, 0.1);
+    border-color: rgba(40, 167, 69, 0.5);
+}
+
+.rating-container {
+    display: flex;
+    align-items: center;
+}
+
+.rating-select {
+    padding: 8px 12px;
+    background-color: #252525;
+    color: #d3d3d3;
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all .3s ease-in-out;
+    min-width: 120px;
+}
+
+.rating-select:hover {
+    background-color: #2a2a2a;
+    border-color: rgba(255, 193, 7, 0.5);
+}
+
+.rating-select:focus {
+    outline: none;
+    border-color: rgba(255, 193, 7, 0.7);
+    box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.2);
+}
+
+.rating-select option {
+    background-color: #252525;
+    color: #d3d3d3;
 }
 
 .btn-icon {
