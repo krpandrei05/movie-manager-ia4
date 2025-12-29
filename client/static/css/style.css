@@ -257,3 +257,237 @@ body {
 .movie-search-item:hover {
     background-color: rgba(255, 255, 255, 0.05);
 }
+/* Friends Page Styles */
+.friends-page-section {
+    width: 100%;
+    max-width: 800px;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.add-friend-page {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    justify-content: center;
+}
+
+.friend-input {
+    background-color: #252525;
+    color: #d3d3d3;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 14px;
+    box-shadow: inset 2px 5px 10px rgb(5, 5, 5);
+}
+
+.friend-input:focus {
+    outline: none;
+    box-shadow: inset 2px 5px 10px rgb(5, 5, 5), 0 0 0 2px #333;
+}
+
+.friend-input::placeholder {
+    color: #888;
+}
+
+.add-friend-btn {
+    background-color: #252525;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: .4s ease-in-out;
+    font-size: 14px;
+}
+
+.add-friend-btn:hover {
+    background-color: black;
+}
+
+.friends-list-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.friend-card {
+    background-color: #252525;
+    padding: 20px;
+    border-radius: 10px;
+    color: #d3d3d3;
+    transition: .3s ease-in-out;
+    cursor: pointer;
+    text-align: center;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    width: 100%;
+    max-width: 500px;
+}
+
+.friend-card:hover {
+    background-color: #2a2a2a;
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.friend-card a {
+    color: #d3d3d3;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+}
+
+.friend-card:hover a {
+    color: white;
+}
+
+.friend-profile-section {
+    width: 100%;
+    max-width: 1200px;
+}
+
+.friend-movies-section {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.friend-list-column {
+    flex: 1;
+    min-width: 0;
+}
+
+.friend-list-column h2 {
+    color: white;
+    font-size: 1.3em;
+    margin-bottom: 15px;
+}
+
+.friend-movies-list {
+    background: #252525;
+    padding: 15px;
+    border-radius: 10px;
+    min-height: 200px;
+    box-shadow: inset 2px 5px 10px rgb(5, 5, 5);
+}
+
+.friend-movie-item {
+    background: #171717;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 8px;
+    color: #d3d3d3;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.friend-movie-rating {
+    color: #ffc107;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+.friend-profile-footer {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.back-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #252525;
+    color: #d3d3d3;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: .3s ease-in-out;
+}
+
+.back-btn:hover {
+    background-color: black;
+    color: white;
+}
+
+/* Recommendations Styles */
+.recommendations-section {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.recommendations-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.recommendation-card {
+    background-color: #252525;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.recommendation-card:hover {
+    transform: translateY(-5px);
+    background-color: #2a2a2a;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+}
+
+.recommendation-card h4 {
+    margin: 0 0 10px 0;
+    color: white;
+    font-size: 1.1em;
+    padding-right: 30px; /* Space for delete button */
+}
+
+.recommendation-from {
+    color: #888;
+    font-size: 0.9em;
+    font-style: italic;
+}
+
+.recommend-movie-section {
+    background-color: #252525;
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    box-shadow: inset 2px 5px 10px rgb(5, 5, 5);
+    max-width: 600px; /* Limit width */
+}
+
+.recommend-movie-section h2 {
+    color: white;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.recommend-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.recommendation-delete-btn {
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    padding: 0 5px;
+    font-size: 1.2em;
+    transition: color 0.3s;
+    position: absolute; /* Position absolute within relative card */
+    top: 10px;
+    right: 10px;
+}
+
+.recommendation-delete-btn:hover {
+    color: #dc3545;
+}
