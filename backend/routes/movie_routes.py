@@ -62,6 +62,76 @@ def add_movie():
     
     return jsonify({'message': 'Film adaugat'}), 201
 
+@movie_bp.route('/movies/<int:id_film>/move', methods=['PUT'])
+def move_movie(id_film):
+    token = request.headers.get('Authorization')
+    uid = verifica_token(token)
+    if not uid:
+        return jsonify({'message': 'Acces interzis'}), 401
+    
+    date = request.get_json()
+    if not date:
+        return jsonify({'message': 'Date lipsa'}), 400
+    
+    noua_lista = date.get('new_list')
+    statusuri_valide = ['To Watch', 'Watching', 'Completed']
+    if not noua_lista:
+        return jsonify({'message': 'Status invalid'}), 400
+    
+    if not isinstance(noua_lista, str) or not noua_lista.strip() or noua_lista not in statusuri_valide:
+        return jsonify({'message': 'Status invalid'}), 400
+    
+    conn = get_db_connection()
+    # Verificare ownership: filmul trebuie sa apartina utilizatorului
+    film = conn.execute('SELECT id FROM movies WHERE id = ? AND user_id = ?', (id_film, uid)).fetchone()
+    if not film:
+        conn.close()
+        return jsonify({'message': 'Film negasit'}), 404
+    
+    # WHERE user_id = uid asigura ca doar proprietarul poate muta filmul
+    conn.execute('UPDATE movies SET status = ? WHERE id = ? AND user_id = ?', (noua_lista, id_film, uid))
+    conn.commit()
+    conn.close()
+    
+    return jsonify({'message': 'Film mutat'}), 200
+
+@movie_bp.route('/movies/<int:id_film>/rate', methods=['PUT'])
+def rate_movie(id_film):
+    token = request.headers.get('Authorization')
+    uid = verifica_token(token)
+    if not uid:
+        return jsonify({'message': 'Acces interzis'}), 401
+    
+    date = request.get_json()
+    if not date:
+        return jsonify({'message': 'Date lipsa'}), 400
+    
+    nota = date.get('rating')
+    if nota is None:
+        return jsonify({'message': 'Nota este obligatorie'}), 400
+    
+    # Validare rating: trebuie sa fie intre 1 si 10
+    try:
+        nota_int = int(nota)
+        if nota_int < 1 or nota_int > 10:
+            return jsonify({'message': 'Rating trebuie sa fie intre 1 si 10'}), 400
+        nota = str(nota_int)
+    except (ValueError, TypeError):
+        return jsonify({'message': 'Rating trebuie sa fie un numar'}), 400
+    
+    conn = get_db_connection()
+    # Verificare ownership
+    film = conn.execute('SELECT id FROM movies WHERE id = ? AND user_id = ?', (id_film, uid)).fetchone()
+    if not film:
+        conn.close()
+        return jsonify({'message': 'Film negasit'}), 404
+    
+    conn.execute('UPDATE movies SET rating = ? WHERE id = ? AND user_id = ?', (nota, id_film, uid))
+    conn.commit()
+    conn.close()
+    
+    return jsonify({'message': 'Nota salvata'}), 200
+
 @movie_bp.route('/movies/<int:id_film>', methods=['DELETE'])
 def delete_movie(id_film):
     token = request.headers.get('Authorization')
