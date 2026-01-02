@@ -76,6 +76,18 @@
                                 <div class="movie-item">
                                     <span class="movie-title-text">{{ movie.title }}</span>
                                     <div class="movie-actions">
+                                        <form method="POST" action="{{ url_for('dashboard.move_movie', movie_id=movie.id) }}" style="display: inline;">
+                                            <input type="hidden" name="new_list" value="Watching">
+                                            <button type="submit" class="move-btn move-btn-watching" title="Move to Watching">
+                                                <span class="btn-text">Watching</span>
+                                            </button>
+                                        </form>
+                                        <form method="POST" action="{{ url_for('dashboard.move_movie', movie_id=movie.id) }}" style="display: inline;">
+                                            <input type="hidden" name="new_list" value="Completed">
+                                            <button type="submit" class="move-btn move-btn-completed" title="Move to Completed">
+                                                <span class="btn-text">Completed</span>
+                                            </button>
+                                        </form>
                                         <form method="POST" action="{{ url_for('dashboard.delete_movie', movie_id=movie.id) }}" style="display: inline;" onsubmit="event.preventDefault(); showConfirmDialog('Are you sure you want to delete the movie &quot;{{ movie.title }}&quot;?', this);">
                                             <button type="submit" class="delete-btn" title="Delete movie">
                                                 <span class="btn-icon">🗑</span>
@@ -95,6 +107,12 @@
                                 <div class="movie-item">
                                     <span class="movie-title-text">{{ movie.title }}</span>
                                     <div class="movie-actions">
+                                        <form method="POST" action="{{ url_for('dashboard.move_movie', movie_id=movie.id) }}" style="display: inline;">
+                                            <input type="hidden" name="new_list" value="Completed">
+                                            <button type="submit" class="move-btn move-btn-completed" title="Move to Completed">
+                                                <span class="btn-text">Completed</span>
+                                            </button>
+                                        </form>
                                         <form method="POST" action="{{ url_for('dashboard.delete_movie', movie_id=movie.id) }}" style="display: inline;" onsubmit="event.preventDefault(); showConfirmDialog('Are you sure you want to delete the movie &quot;{{ movie.title }}&quot;?', this);">
                                             <button type="submit" class="delete-btn" title="Delete movie">
                                                 <span class="btn-icon">🗑</span>
@@ -119,6 +137,16 @@
                                         {% endif %}
                                     </span>
                                     <div class="movie-actions">
+                                        <form method="POST" action="{{ url_for('dashboard.rate_movie', movie_id=movie.id) }}" style="display: inline;">
+                                            <div class="rating-container">
+                                                <select name="rating" class="rating-select" onchange="this.form.submit()" title="Rate this movie">
+                                                    <option value="">Rate (1-10)</option>
+                                                    {% for i in range(1, 11) %}
+                                                        <option value="{{ i }}" {% if movie.rating and movie.rating|int == i %}selected{% endif %}>{{ i }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </form>
                                         <form method="POST" action="{{ url_for('dashboard.delete_movie', movie_id=movie.id) }}" style="display: inline;" onsubmit="event.preventDefault(); showConfirmDialog('Are you sure you want to delete the movie &quot;{{ movie.title }}&quot;?', this);">
                                             <button type="submit" class="delete-btn" title="Delete movie">
                                                 <span class="btn-icon">🗑</span>

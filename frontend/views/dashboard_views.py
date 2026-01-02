@@ -10,7 +10,7 @@ from models.database import get_db_connection
 
 FRONTEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, FRONTEND_DIR)
-from utils.validators import validate_movie_title
+from utils.validators import validate_movie_title, validate_rating
 
 dashboard_bp = Blueprint('dashboard', __name__)
 
@@ -109,6 +109,75 @@ def add_movie():
         conn.close()
         flash('Error adding movie', 'error')
     
+    return redirect(url_for('dashboard.show_dashboard'))
+
+@dashboard_bp.route('/movies/<int:movie_id>/move', methods=['POST'])
+def move_movie(movie_id):
+    auth_check = require_auth()
+    if auth_check:
+        return auth_check
+    
+    user_id = session['user_id']
+    new_status = request.form.get('new_list', '').strip()
+    
+    if new_status not in ['To Watch', 'Watching', 'Completed']:
+        flash('Invalid status', 'error')
+        return redirect(url_for('dashboard.show_dashboard'))
+    
+    conn = get_db_connection()
+    movie = conn.execute(
+        'SELECT id FROM movies WHERE id = ? AND user_id = ?',
+        (movie_id, user_id)
+    ).fetchone()
+    
+    if not movie:
+        conn.close()
+        flash('Movie not found', 'error')
+        return redirect(url_for('dashboard.show_dashboard'))
+    
+    conn.execute(
+        'UPDATE movies SET status = ? WHERE id = ? AND user_id = ?',
+        (new_status, movie_id, user_id)
+    )
+    conn.commit()
+    conn.close()
+    
+    flash(f'Movie moved to {new_status} successfully!', 'success')
+    return redirect(url_for('dashboard.show_dashboard'))
+
+@dashboard_bp.route('/movies/<int:movie_id>/rate', methods=['POST'])
+def rate_movie(movie_id):
+    auth_check = require_auth()
+    if auth_check:
+        return auth_check
+    
+    user_id = session['user_id']
+    rating = request.form.get('rating', '').strip()
+    
+    valid, message = validate_rating(rating)
+    if not valid:
+        flash(message, 'error')
+        return redirect(url_for('dashboard.show_dashboard'))
+    
+    conn = get_db_connection()
+    movie = conn.execute(
+        'SELECT id FROM movies WHERE id = ? AND user_id = ?',
+        (movie_id, user_id)
+    ).fetchone()
+    
+    if not movie:
+        conn.close()
+        flash('Movie not found', 'error')
+        return redirect(url_for('dashboard.show_dashboard'))
+    
+    conn.execute(
+        'UPDATE movies SET rating = ? WHERE id = ? AND user_id = ?',
+        (rating, movie_id, user_id)
+    )
+    conn.commit()
+    conn.close()
+    
+    flash(f'Movie rated {rating}/10!', 'success')
     return redirect(url_for('dashboard.show_dashboard'))
 
 @dashboard_bp.route('/movies/<int:movie_id>/delete', methods=['POST'])
