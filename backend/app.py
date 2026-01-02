@@ -3,6 +3,7 @@ from flask import Flask, jsonify, request
 from models.database import init_db
 from routes.auth_routes import auth_bp
 from routes.movie_routes import movie_bp
+from routes.friend_routes import friend_bp
 from services.external_api import search_movies
 
 app = Flask(__name__)
@@ -28,6 +29,7 @@ def handle_preflight():
 # Inregistrare blueprint-uri cu prefix /api
 app.register_blueprint(auth_bp, url_prefix='/api')
 app.register_blueprint(movie_bp, url_prefix='/api')
+app.register_blueprint(friend_bp, url_prefix='/api')
 
 @app.route('/api/search-movies', methods=['GET'])
 def search_movies_route():
