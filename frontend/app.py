@@ -13,9 +13,11 @@ app.secret_key = 'movie_manager_secret_key_change_in_production'
 
 from views import auth_views
 from views import dashboard_views
+from views import friend_views
 
 app.register_blueprint(auth_views.auth_bp)
 app.register_blueprint(dashboard_views.dashboard_bp)
+app.register_blueprint(friend_views.friend_bp)
 
 @app.route('/')
 def index():
