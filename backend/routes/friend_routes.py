@@ -1,4 +1,4 @@
-# Modul pentru rutele legate de prieteni (/friends, /friends/<username>/movies)
+# Modul pentru rutele legate de prieteni (/friends, /friends/<username>/movies, /recommendations)
 from flask import Blueprint, request, jsonify
 import sqlite3
 from models.database import get_db_connection
@@ -120,4 +120,103 @@ def get_friend_movies(friend_username):
             })
     
     return jsonify(filme), 200
+
+@friend_bp.route('/friends/recommend', methods=['POST'])
+def recommend_movie():
+    token = request.headers.get('Authorization')
+    id_user = verifica_token(token)
+    if not id_user:
+        return jsonify({'message': 'Acces interzis'}), 401
+    
+    date = request.get_json()
+    if not date:
+        return jsonify({'message': 'Date lipsa'}), 400
+    
+    nume_prieten = date.get('friend_username')
+    titlu_film = date.get('movie_title')
+    
+    if not nume_prieten or not nume_prieten.strip():
+        return jsonify({'message': 'Numele prietenului este obligatoriu'}), 400
+    
+    if not titlu_film or not titlu_film.strip():
+        return jsonify({'message': 'Titlul filmului este obligatoriu'}), 400
+    
+    conn = get_db_connection()
+    prieten = conn.execute('SELECT id FROM users WHERE username = ?', (nume_prieten,)).fetchone()
+    
+    if not prieten:
+        conn.close()
+        return jsonify({'message': 'Utilizator negasit'}), 404
+    
+    id_prieten = prieten['id']
+    
+    # Verificare prietenie: poti recomanda doar daca sunteti prieteni
+    prietenie = conn.execute('SELECT id FROM friends WHERE (user_id = ? AND friend_id = ?) OR (user_id = ? AND friend_id = ?)', 
+                            (id_user, id_prieten, id_prieten, id_user)).fetchone()
+    
+    if not prietenie:
+        conn.close()
+        return jsonify({'message': 'Nu sunteti prieteni'}), 403
+    
+    try:
+        conn.execute('INSERT INTO recommendations (from_user_id, to_user_id, movie_title) VALUES (?, ?, ?)', 
+                    (id_user, id_prieten, titlu_film))
+        conn.commit()
+        conn.close()
+        return jsonify({'message': 'Recomandare trimisa'}), 201
+    except Exception:
+        conn.close()
+        return jsonify({'message': 'Eroare la trimiterea recomandarii'}), 400
+
+@friend_bp.route('/recommendations', methods=['GET'])
+def get_recommendations():
+    token = request.headers.get('Authorization')
+    id_user = verifica_token(token)
+    if not id_user:
+        return jsonify({'message': 'Acces interzis'}), 401
+    
+    conn = get_db_connection()
+    # Selectam recomandarile primite (to_user_id = id_user) cu username-ul celui care a trimis
+    recomandari = conn.execute('''
+        SELECT r.id, r.movie_title, u.username as from_username
+        FROM recommendations r
+        INNER JOIN users u ON r.from_user_id = u.id
+        WHERE r.to_user_id = ?
+        ORDER BY r.id DESC
+    ''', (id_user,)).fetchall()
+    
+    conn.close()
+    
+    lista_recomandari = []
+    for recomandare in recomandari:
+        lista_recomandari.append({
+            'id': recomandare['id'],
+            'movie_title': recomandare['movie_title'],
+            'from_username': recomandare['from_username']
+        })
+    
+    return jsonify(lista_recomandari), 200
+
+@friend_bp.route('/recommendations/<int:recommendation_id>', methods=['DELETE'])
+def delete_recommendation(recommendation_id):
+    token = request.headers.get('Authorization')
+    id_user = verifica_token(token)
+    if not id_user:
+        return jsonify({'message': 'Acces interzis'}), 401
+    
+    conn = get_db_connection()
+    # Verificare ownership: utilizatorul poate sterge doar recomandarile primite
+    recomandare = conn.execute('SELECT id FROM recommendations WHERE id = ? AND to_user_id = ?', 
+                               (recommendation_id, id_user)).fetchone()
+    
+    if not recomandare:
+        conn.close()
+        return jsonify({'message': 'Recomandare negasita'}), 404
+    
+    conn.execute('DELETE FROM recommendations WHERE id = ? AND to_user_id = ?', 
+                (recommendation_id, id_user))
+    conn.commit()
+    conn.close()
+    
+    return jsonify({'message': 'Recomandare stearsa'}), 200
 
