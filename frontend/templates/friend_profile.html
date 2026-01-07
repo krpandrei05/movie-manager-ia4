@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="dashboard">
+    <aside class="sidebar">
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="{{ url_for('dashboard.show_dashboard') }}" class="nav-item" data-page="dashboard">My Movies</a></li>
+                <li><a href="{{ url_for('friend.show_friends') }}" class="nav-item active" data-page="friends">Friends</a></li>
+            </ul>
+        </nav>
+        <div class="sidebar-footer">
+            <form method="POST" action="{{ url_for('auth.logout') }}" style="display: inline;">
+                <button type="submit" class="logout-btn">Logout</button>
+            </form>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="dashboard-header">
+            <div class="header-left">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="header-logo" onclick="document.querySelector('.sidebar').classList.toggle('collapsed')" style="cursor: pointer;" title="Toggle menu">
+                <h2 class="header-title">Movie Manager</h2>
+            </div>
+            <div class="user-info">
+                <svg class="user-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                    <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+                </svg>
+                <span id="username-display" class="username-text">{{ session.get('username', 'User') }}</span>
+            </div>
+        </header>
+
+        <div class="content-wrapper">
+            <div id="page-friend-profile" class="page-content">
+                <section class="friend-profile-section">
+                    <h1 class="page-title">{{ friend_username }}'s Profile</h1>
+                    
+                    <div class="friend-movies-section">
+                        <div class="friend-list-column">
+                            <h2>To Watch</h2>
+                            <div id="friend-to-watch-list" class="friend-movies-list">
+                                {% if movies['To Watch'] %}
+                                    {% for movie in movies['To Watch'] %}
+                                        <div class="friend-movie-item">
+                                            <span>{{ movie.title }}</span>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <p style="color: #888; text-align: center; padding: 10px; font-size: 0.9em;">No movies in this list.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="friend-list-column">
+                            <h2>Watching</h2>
+                            <div id="friend-watching-list" class="friend-movies-list">
+                                {% if movies['Watching'] %}
+                                    {% for movie in movies['Watching'] %}
+                                        <div class="friend-movie-item">
+                                            <span>{{ movie.title }}</span>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <p style="color: #888; text-align: center; padding: 10px; font-size: 0.9em;">No movies in this list.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="friend-list-column">
+                            <h2>Completed</h2>
+                            <div id="friend-completed-list" class="friend-movies-list">
+                                {% if movies['Completed'] %}
+                                    {% for movie in movies['Completed'] %}
+                                        <div class="friend-movie-item">
+                                            <span>{{ movie.title }}</span>
+                                            {% if movie.rating and movie.rating != '-' %}
+                                                <span class="friend-movie-rating">({{ movie.rating }}/10)</span>
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <p style="color: #888; text-align: center; padding: 10px; font-size: 0.9em;">No movies in this list.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="friend-profile-footer">
+                        <a href="{{ url_for('friend.show_friends') }}" class="back-btn">← Back to Friends</a>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}
+
