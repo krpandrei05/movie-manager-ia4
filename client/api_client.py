@@ -53,3 +53,33 @@ class APIClient:
             return requests.put(url, json={'status': status}, headers=self._get_headers())
         except requests.exceptions.RequestException:
             return None
+
+    def get(self, endpoint):
+        url = f"{self.base_url}/{endpoint.lstrip('/')}"
+        try:
+            return requests.get(url, headers=self._get_headers())
+        except requests.exceptions.RequestException:
+            return None
+
+    def post(self, endpoint, data=None):
+        url = f"{self.base_url}/{endpoint.lstrip('/')}"
+        try:
+            return requests.post(url, json=data, headers=self._get_headers())
+        except requests.exceptions.RequestException:
+            return None
+
+    def put(self, endpoint, data=None):
+        url = f"{self.base_url}/{endpoint.lstrip('/')}"
+        try:
+            return requests.put(url, json=data, headers=self._get_headers())
+        except requests.exceptions.RequestException:
+            return None
+
+    def delete(self, endpoint):
+        url = f"{self.base_url}/{endpoint.lstrip('/')}"
+        try:
+            return requests.delete(url, headers=self._get_headers())
+        except requests.exceptions.RequestException:
+            return None
+
+api_client = APIClient()
