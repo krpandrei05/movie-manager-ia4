@@ -6,8 +6,8 @@
         <nav class="sidebar-nav">
             <ul>
                 <li><a href="{{ url_for('dashboard.show_dashboard') }}" class="nav-item" data-page="dashboard">My Movies</a></li>
-                <li><a href="{{ url_for('friend.show_friends') }}" class="nav-item active" data-page="friends">Friends</a></li>
-                <li><a href="{{ url_for('friend.show_recommendations') }}" class="nav-item" data-page="recommendations">Recommendations</a></li>
+                <li><a href="{{ url_for('friend.show_friends') }}" class="nav-item" data-page="friends">Friends</a></li>
+                <li><a href="{{ url_for('friend.show_recommendations') }}" class="nav-item active" data-page="recommendations">Recommendations</a></li>
             </ul>
         </nav>
         <div class="sidebar-footer">
@@ -33,26 +33,25 @@
         </header>
 
         <div class="content-wrapper">
-            <div id="page-friends" class="page-content">
-                <section class="friends-page-section">
-                    <h1 class="page-title">Friends</h1>
+            <div id="page-recommendations" class="page-content">
+                <section class="recommendations-section">
+                    <h1 class="page-title">Recommendations</h1>
                     
-                    <div class="add-friend-page">
-                        <form method="POST" action="{{ url_for('friend.add_friend') }}" style="display: flex; flex-direction: column; gap: 15px; align-items: center; width: 100%; max-width: 600px;">
-                            <input type="text" name="friend_username" placeholder="Search user..." class="friend-input" style="width: 100%;" required>
-                            <button type="submit" class="add-friend-btn">Add Friend</button>
-                        </form>
-                    </div>
-                    
-                    <div id="friends-list-page" class="friends-list-page">
-                        {% if friends %}
-                            {% for friend in friends %}
-                                <div class="friend-card">
-                                    <a href="{{ url_for('friend.show_friend_profile', username=friend) }}">{{ friend }}</a>
+                    <div id="recommendations-list" class="recommendations-list">
+                        {% if recommendations %}
+                            {% for rec in recommendations %}
+                                <div class="recommendation-card">
+                                    <form method="POST" action="{{ url_for('friend.delete_recommendation', recommendation_id=rec.id) }}" style="display: inline; float: right;" onsubmit="event.preventDefault(); showConfirmDialog('Are you sure you want to delete the recommendation for &quot;{{ rec.movie_title }}&quot; from {{ rec.from_username }}?', this);">
+                                        <button type="submit" class="recommendation-delete-btn" title="Delete recommendation">
+                                            <span class="delete-icon">×</span>
+                                        </button>
+                                    </form>
+                                    <h4>{{ rec.movie_title }}</h4>
+                                    <div class="recommendation-from">Recommended by: {{ rec.from_username }}</div>
                                 </div>
                             {% endfor %}
                         {% else %}
-                            <p style="color: #888; text-align: center; padding: 20px;">No friends yet. Add some!</p>
+                            <p style="color: #888; text-align: center; padding: 20px;">No recommendations yet.</p>
                         {% endif %}
                     </div>
                 </section>
