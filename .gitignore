@@ -1,0 +1,10 @@
+# Python cache directories (există în proiect)
+backend/__pycache__/
+backend/models/__pycache__/
+backend/routes/__pycache__/
+backend/services/__pycache__/
+frontend/views/__pycache__/
+frontend/utils/__pycache__/
+
+# Database instance directory (conține production.db)
+backend/instance/

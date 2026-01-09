@@ -60,22 +60,13 @@
                 confirmYesBtn.addEventListener('click', function() {
                     if (confirmForm) {
                         const form = confirmForm;
-                        const action = form.getAttribute('action');
                         
+                        // Ascundem dialogul
                         document.getElementById('confirm-dialog').classList.remove('show');
                         confirmForm = null;
                         
-                        fetch(action, {
-                            method: 'POST',
-                            credentials: 'same-origin',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded',
-                            }
-                        }).then(function(response) {
-                            window.location.href = window.location.href;
-                        }).catch(function(error) {
-                            window.location.href = window.location.href;
-                        });
+                        // Trimitem formularul direct
+                        form.submit();
                     }
                 });
             }

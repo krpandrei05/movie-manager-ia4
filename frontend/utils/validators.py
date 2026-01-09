@@ -1,3 +1,4 @@
+# Valideaza un username
 def validate_username(username):
     if not username or not username.strip():
         return False, 'Username is required'
@@ -7,6 +8,7 @@ def validate_username(username):
     
     return True, ''
 
+# Valideaza o parola
 def validate_password(password):
     if not password or not password.strip():
         return False, 'Password is required'
@@ -16,12 +18,14 @@ def validate_password(password):
     
     return True, ''
 
+# Valideaza un titlu de film
 def validate_movie_title(title):
     if not title or not title.strip():
         return False, 'Movie title is required'
     
     return True, ''
 
+# Valideaza un rating (1-10)
 def validate_rating(rating):
     try:
         rating_value = int(rating)
