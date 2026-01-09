@@ -10,7 +10,7 @@ from models.database import get_db_connection
 
 FRONTEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, FRONTEND_DIR)
-from utils.validators import validate_username
+from utils.validators import validate_username, validate_movie_title
 
 friend_bp = Blueprint('friend', __name__)
 
@@ -139,3 +139,115 @@ def show_friend_profile(username):
             })
     
     return render_template('friend_profile.html', friend_username=username, movies=movies)
+
+@friend_bp.route('/friends/<username>/recommend', methods=['POST'])
+def recommend_movie(username):
+    auth_check = require_auth()
+    if auth_check:
+        return auth_check
+    
+    user_id = session['user_id']
+    movie_title = request.form.get('movie_title', '').strip()
+    movie_validated = request.form.get('movie_validated', '0')
+    
+    if movie_validated != '1':
+        flash('Please select a movie from the dropdown list.', 'error')
+        return redirect(url_for('friend.show_friend_profile', username=username))
+    
+    valid, message = validate_movie_title(movie_title)
+    if not valid:
+        flash(message, 'error')
+        return redirect(url_for('friend.show_friend_profile', username=username))
+    
+    conn = get_db_connection()
+    
+    friend_user = conn.execute('SELECT id FROM users WHERE username = ?', (username,)).fetchone()
+    if not friend_user:
+        conn.close()
+        flash('User not found', 'error')
+        return redirect(url_for('friend.show_friends'))
+    
+    friend_id = friend_user['id']
+    
+    friendship = conn.execute('''
+        SELECT id FROM friends 
+        WHERE (user_id = ? AND friend_id = ?) OR (user_id = ? AND friend_id = ?)
+    ''', (user_id, friend_id, friend_id, user_id)).fetchone()
+    
+    if not friendship:
+        conn.close()
+        flash('You are not friends with this user', 'error')
+        return redirect(url_for('friend.show_friends'))
+    
+    try:
+        conn.execute(
+            'INSERT INTO recommendations (from_user_id, to_user_id, movie_title) VALUES (?, ?, ?)',
+            (user_id, friend_id, movie_title)
+        )
+        conn.commit()
+        conn.close()
+        flash('Recommendation sent successfully!', 'success')
+    except Exception as e:
+        conn.close()
+        flash('Error sending recommendation', 'error')
+    
+    return redirect(url_for('friend.show_friend_profile', username=username))
+
+@friend_bp.route('/recommendations')
+def show_recommendations():
+    auth_check = require_auth()
+    if auth_check:
+        return auth_check
+    
+    user_id = session['user_id']
+    
+    conn = get_db_connection()
+    recommendations_data = conn.execute('''
+        SELECT r.id, r.movie_title, u.username as from_username
+        FROM recommendations r
+        INNER JOIN users u ON r.from_user_id = u.id
+        WHERE r.to_user_id = ?
+        ORDER BY r.id DESC
+    ''', (user_id,)).fetchall()
+    conn.close()
+    
+    recommendations = [
+        {
+            'id': rec['id'],
+            'movie_title': rec['movie_title'],
+            'from_username': rec['from_username']
+        }
+        for rec in recommendations_data
+    ]
+    
+    return render_template('recommendations.html', recommendations=recommendations)
+
+@friend_bp.route('/recommendations/<int:recommendation_id>/delete', methods=['POST'])
+def delete_recommendation(recommendation_id):
+    auth_check = require_auth()
+    if auth_check:
+        return auth_check
+    
+    user_id = session['user_id']
+    
+    conn = get_db_connection()
+    
+    rec = conn.execute(
+        'SELECT id FROM recommendations WHERE id = ? AND to_user_id = ?',
+        (recommendation_id, user_id)
+    ).fetchone()
+    
+    if not rec:
+        conn.close()
+        flash('Recommendation not found', 'error')
+        return redirect(url_for('friend.show_recommendations'))
+    
+    conn.execute(
+        'DELETE FROM recommendations WHERE id = ? AND to_user_id = ?',
+        (recommendation_id, user_id)
+    )
+    conn.commit()
+    conn.close()
+    
+    flash('Recommendation deleted successfully!', 'success')
+    return redirect(url_for('friend.show_recommendations'))
