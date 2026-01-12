@@ -38,23 +38,27 @@ In sidebar-ul din stanga poti naviga intre pagini. Pagina Friends iti permite sa
 
 Pentru a te deconecta, apasa pe butonul Logout din partea de jos a sidebar-ului. Pentru a opri serverele, apasa Ctrl+C in terminal. Daca ai folosit start.py, ambele servere se vor opri odata. Daca ai pornit serverele manual, trebuie sa opresti fiecare terminal separat.
 
-Darie Vlad a lucrat la folderul frontend si a implementat toate functionalitatile de pe partea de interfata web. A creat toate paginile HTML folosind Jinja2 templates: pagina de login, pagina de inregistrare, dashboard-ul principal cu cele trei liste de filme, pagina de prieteni, pagina de recomandari si pagina de profil pentru prieteni. A scris tot CSS-ul pentru stilizarea aplicatiei, creand tema dark si stilurile pentru toate componentele: sidebar-ul, butoanele, formularele, listele de filme, dropdown-urile si dialog-urile.
+Vlad Darie:
+- Am lucrat la folderul frontend si am implementat toate functionalitatile de pe partea de interfata web
+- Am creat toate paginile HTML folosind Jinja2 templates: pagina de login, pagina de inregistrare, dashboard-ul principal cu cele trei liste de filme, pagina de prieteni, pagina de recomandari si pagina de profil pentru prieteni
+- Am scris tot CSS-ul pentru stilizarea aplicatiei, creand tema dark si stilurile pentru toate componentele: sidebar-ul, butoanele, formularele, listele de filme, dropdown-urile si dialog-urile
+- Am implementat JavaScript-ul pentru autocomplete-ul de la cautarea filmelor, care face request-uri catre backend pe masura ce utilizatorul scrie, implementeaza debounce pentru a nu face prea multe request-uri, si gestioneaza afisarea si ascunderea dropdown-ului cu rezultate
+- Am implementat functionalitatea pentru dialog-ul de confirmare custom folosit la stergerea filmelor si recomandarilor
+- Am creat toate view-urile Flask din folderul frontend/views: auth_views.py pentru autentificare, dashboard_views.py pentru gestionarea filmelor si friend_views.py pentru prieteni si recomandari, care proceseaza formularele, valideaza datele, comunica cu backend-ul si returneaza paginile HTML corespunzatoare
+- Am implementat sistemul de sesiuni Flask pentru autentificare persistenta si am adaugat validari pentru a preveni adaugarea de filme duplicate
+- Am creat utilitarele din frontend/utils: validators.py pentru validarea input-urilor si api_client.py pentru comunicarea cu backend-ul prin HTTP, desi in final nu s-a folosit in mod activ
+- Am configurat app.py din frontend pentru a inregistra toate blueprint-urile si a seta ruta root pentru redirect la login sau dashboard
 
-A implementat JavaScript-ul pentru autocomplete-ul de la cautarea filmelor. Acest cod face request-uri catre backend pe masura ce utilizatorul scrie, implementeaza debounce pentru a nu face prea multe request-uri, si gestioneaza afisarea si ascunderea dropdown-ului cu rezultate. A implementat si functionalitatea pentru dialog-ul de confirmare custom folosit la stergerea filmelor si recomandarilor.
-
-A creat toate view-urile Flask din folderul frontend/views: auth_views.py pentru autentificare, dashboard_views.py pentru gestionarea filmelor si friend_views.py pentru prieteni si recomandari. Aceste view-uri proceseaza formularele, valideaza datele, comunica cu backend-ul si returneaza paginile HTML corespunzatoare. A implementat sistemul de sesiuni Flask pentru autentificare persistenta si a adaugat validari pentru a preveni adaugarea de filme duplicate.
-
-A creat si utilitarele din frontend/utils: validators.py pentru validarea input-urilor si api_client.py pentru comunicarea cu backend-ul prin HTTP, desi in final nu s-a folosit in mod activ. A configurat app.py din frontend pentru a inregistra toate blueprint-urile si a seta ruta root pentru redirect la login sau dashboard.
-
-Carp Andrei a lucrat la folderul backend si a implementat toate functionalitatile de pe partea de API si logica de business. A creat structura bazei de date SQLite cu toate cele patru tabele necesare: users pentru utilizatori, movies pentru filme, friends pentru relatiile de prietenie si recommendations pentru recomandari. A implementat functiile din models/database.py pentru gestionarea conexiunii la baza de date si initializarea tabelelor.
-
-A creat toate rutele API din folderul routes: auth_routes.py pentru autentificare cu endpoint-uri pentru register si login, movie_routes.py pentru gestionarea filmelor cu endpoint-uri pentru adaugare, mutare intre liste, notare si stergere, si friend_routes.py pentru prieteni si recomandari cu endpoint-uri pentru adaugare prieteni, vizualizare filme prieteni, trimitere recomandari si gestionare recomandari.
-
-A implementat serviciile din folderul services: auth_service.py pentru logica de autentificare cu criptarea parolelor folosind Werkzeug si validarea datelor, si external_api.py pentru integrarea cu TVMaze API. A creat functia search_movies care face request-uri catre TVMaze, proceseaza rezultatele si le returneaza intr-un format compatibil cu aplicatia.
-
-A implementat security.py pentru verificarea token-urilor de autentificare. Token-urile sunt simple si au formatul token_secret_pentru_username. Functia verifica_token extrage username-ul din token si verifica daca utilizatorul exista in baza de date.
-
-A configurat app.py din backend pentru a inregistra toate blueprint-urile cu prefix-ul /api, a adaugat CORS headers pentru a permite comunicarea cu frontend-ul, si a creat endpoint-ul pentru cautarea filmelor si health check. A setat si initializarea bazei de date la pornirea serverului.
+Carp Andrei:
+- Am lucrat la folderul backend si am implementat toate functionalitatile de pe partea de API si logica de business
+- Am creat structura bazei de date SQLite cu toate cele patru tabele necesare: users pentru utilizatori, movies pentru filme, friends pentru relatiile de prietenie si recommendations pentru recomandari
+- Am implementat functiile din models/database.py pentru gestionarea conexiunii la baza de date si initializarea tabelelor
+- Am creat toate rutele API din folderul routes: auth_routes.py pentru autentificare cu endpoint-uri pentru register si login, movie_routes.py pentru gestionarea filmelor cu endpoint-uri pentru adaugare, mutare intre liste, notare si stergere, si friend_routes.py pentru prieteni si recomandari cu endpoint-uri pentru adaugare prieteni, vizualizare filme prieteni, trimitere recomandari si gestionare recomandari
+- Am implementat serviciile din folderul services: auth_service.py pentru logica de autentificare cu criptarea parolelor folosind Werkzeug si validarea datelor, si external_api.py pentru integrarea cu TVMaze API
+- Am creat functia search_movies care face request-uri catre TVMaze, proceseaza rezultatele si le returneaza intr-un format compatibil cu aplicatia
+- Am implementat security.py pentru verificarea token-urilor de autentificare, unde token-urile sunt simple si au formatul token_secret_pentru_username, iar functia verifica_token extrage username-ul din token si verifica daca utilizatorul exista in baza de date
+- Am configurat app.py din backend pentru a inregistra toate blueprint-urile cu prefix-ul /api, am adaugat CORS headers pentru a permite comunicarea cu frontend-ul, si am creat endpoint-ul pentru cautarea filmelor si health check
+- Am setat initializarea bazei de date la pornirea serverului
 
 Amandoi am lucrat la start.py pentru a crea un script care porneste automat ambele servere. Scriptul foloseste subprocess pentru a rula fiecare server in propriul proces si afiseaza output-ul ambelor servere in consola.
 
