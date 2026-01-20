@@ -1,12 +1,12 @@
 # Movie Manager
 
 ## Descriere
-Movie Manager este o apliactie distribuita de tip Client-Server pentru gestionarea colectiilor personale de filme si seriale. Arhitectura este complet decuplata: Backend-ul expune un API REST, iar Frontend-ul (Client Web) consuma acest API pentru a oferi intefata utilizatorului. Utilizatorii pot cauta filme (TVMaze API), le pot organiza in liste (To Watch, Watching, Completed) si pot interactiona prin sistemul de prieteni.
+Movie Manager este o aplicatie distribuita de tip Client-Server pentru gestionarea colectiilor personale de filme si seriale. Arhitectura este complet decuplata: Backend-ul expune un API REST, iar Frontend-ul (Client Web) consuma acest API pentru a oferi interfata utilizatorului. Utilizatorii pot cauta filme (TVMaze API), le pot organiza in liste (To Watch, Watching, Completed) si pot interactiona prin sistemul de prieteni.
 
 ## Link GitHub
 https://github.com/krpandrei05/movie-manager-ia4
 
-## Limbaje si tehnologi
+## Limbaje si tehnologii
 *   **Python 3**: Limbajul principal
 *   **Flask**: Framework web folosit atat pentru Server (API), cat si pentru Client (Web Server)
 *   **SQLite**: Baza de date relationala (lightweight)
@@ -14,7 +14,7 @@ https://github.com/krpandrei05/movie-manager-ia4
 *   **HTML / CSS / JavaScript**: Interfata grafica (tema Dark Mode custom, interactiuni AJAX)
 
 ## Instructiuni rulare
-1.  **Instalare dependinte:**
+1.  **Instalare dependente:**
     Se recomanda crearea unui mediu virtual.
     ```bash
     pip install -r requirements.txt
@@ -26,7 +26,7 @@ https://github.com/krpandrei05/movie-manager-ia4
     python start.py
     ```
 
-3.  **Acesare:**
+3.  **Accesare:**
     Deschideti browser-ul la: `http://localhost:5001`
 
 *(Optional) Rulare manuala:*
@@ -36,7 +36,7 @@ https://github.com/krpandrei05/movie-manager-ia4
 ## Contributii individuale
 
 ### Vlad Darie
-*   Impelmentarea aplicatiei Client folosind Flask si template-uri Jinja2.
+*   Implementarea aplicatiei Client folosind Flask si template-uri Jinja2.
 *   Dezvoltarea interfetei grafice (HTML, CSS custom, Responsive Design).
 *   Implementarea logicii de JavaScript pentru cautare (autocomplete) si interactiuni dinamice.
 *   Crearea modulului `api_client.py` pentru comunicarea cu API-ul REST.
